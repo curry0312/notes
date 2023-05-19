@@ -1,27 +1,31 @@
 import { FormEvent, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import { NoteData, Tag } from "../App";
 import { v4 as uuidV4 } from "uuid";
+// localStorage.clear()
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
   onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
 };
 
-function NoteForm({ onSubmit, onAddTag }: NoteFormProps) {
+function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const navigate = useNavigate()
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     onSubmit({
       title: titleRef.current!.value, // "!" means that this can never be null
       markdown: markdownRef.current!.value, // "!" means that this can never be null
-      tags: [],
+      tags: selectedTags,
     });
+    navigate("..")
   }
   return (
     <div>
@@ -38,10 +42,13 @@ function NoteForm({ onSubmit, onAddTag }: NoteFormProps) {
               <Form.Group controlId="tags">
                 <Form.Label>Tags</Form.Label>
                 <CreatableSelect
+                  options={availableTags.map((tag) => {
+                    return { label: tag.label, value: tag.id };
+                  })}
                   onCreateOption={(label) => {
                     const newTag = { id: uuidV4(), label: label };
-                    onAddTag(newTag);
-                    setSelectedTags((prevSelectedTags) => [
+                    onAddTag(newTag); //add new note to the notes state in App.tsx
+                    setSelectedTags((prevSelectedTags) => [ //set current selected tags
                       ...prevSelectedTags,
                       newTag,
                     ]);
