@@ -4,19 +4,26 @@ import { Link, useNavigate } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import { NoteData, Tag } from "../App";
 import { v4 as uuidV4 } from "uuid";
-// localStorage.clear()
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
-};
+} & Partial<NoteData>;
 
-function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
+function NoteForm({
+  onSubmit,
+  onAddTag,
+  availableTags,
+  title = "",
+  markdown = "",
+  tags = [],
+}: NoteFormProps) {
+  
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const navigate = useNavigate()
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
+  const navigate = useNavigate();
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
@@ -25,7 +32,7 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
       markdown: markdownRef.current!.value, // "!" means that this can never be null
       tags: selectedTags,
     });
-    navigate("..")
+    navigate("..");
   }
   return (
     <div>
@@ -35,7 +42,7 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
             <Col>
               <Form.Group controlId="title">
                 <Form.Label>Title</Form.Label>
-                <Form.Control ref={titleRef} required />
+                <Form.Control ref={titleRef} required defaultValue={title}/>
               </Form.Group>
             </Col>
             <Col>
@@ -48,7 +55,8 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
                   onCreateOption={(label) => {
                     const newTag = { id: uuidV4(), label: label };
                     onAddTag(newTag); //add new note to the notes state in App.tsx
-                    setSelectedTags((prevSelectedTags) => [ //set current selected tags
+                    setSelectedTags((prevSelectedTags) => [
+                      //set current selected tags
                       ...prevSelectedTags,
                       newTag,
                     ]);
@@ -70,7 +78,7 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
           </Row>
           <Form.Group>
             <Form.Label>Body</Form.Label>
-            <Form.Control ref={markdownRef} required as="textarea" rows={15} />
+            <Form.Control defaultValue={markdown} ref={markdownRef} required as="textarea" rows={15} />
           </Form.Group>
           <Stack direction="horizontal" gap={2} className="justify-content-end">
             <Button type="submit" variant="primary">

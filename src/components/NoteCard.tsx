@@ -29,7 +29,7 @@ export default function NoteCard({ id, title, tags }: NoteCardProps) {
                 className="justify-content-center flex-wrap"
               >
                 {tags.map((tag) => {
-                  return <Badge key={tag.id}>{tag.label}</Badge>;
+                  return <Badge className="text-truncate" key={tag.id}>{tag.label}</Badge>;
                 })}
               </Stack>
             )}
