@@ -1,11 +1,14 @@
 {
+  "homepage": "https://curry0312.github.io/notes/",
   "name": "note",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,6 +26,7 @@
     "@types/react-dom": "^18.2.4",
     "@types/uuid": "^9.0.1",
     "@vitejs/plugin-react": "^2.2.0",
+    "gh-pages": "^5.0.0",
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
   }
